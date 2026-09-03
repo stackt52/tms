@@ -91,10 +91,10 @@ Authorisation is entirely server-side (SRS §6/§24): every route checks roles a
 
 | Variable | Purpose |
 | --- | --- |
-| `GCLOUD_PROJECT` / `FIREBASE_CONFIG` | set by Cloud Functions; the seed defaults them to `ihm-tms-dev` |
+| `GCLOUD_PROJECT` / `FIREBASE_CONFIG` | set by Cloud Functions; the seed defaults them to `demo-ihm-tms` |
 | `FIRESTORE_EMULATOR_HOST`, `FIREBASE_AUTH_EMULATOR_HOST`, `FIREBASE_STORAGE_EMULATOR_HOST` | set automatically by the functions emulator; the seed defaults them to `127.0.0.1:8080 / 9099 / 9199` and refuses non-local Firestore hosts |
 | `STORAGE_BUCKET` | optional override for the upload bucket (defaults to the project's default bucket) |
-| `API_BASE` | smoke script only — API origin (default `http://127.0.0.1:5001/ihm-tms-dev/europe-west1/api`) |
+| `API_BASE` | smoke script only — API origin (default `http://127.0.0.1:5001/demo-ihm-tms/us-east4/api`) |
 
 Firestore indexes live in `../firestore.indexes.json` (already covers the list queries used here; deploy with `firebase deploy --only firestore:indexes`).
 
@@ -113,7 +113,7 @@ npm run seed -w functions            # in another terminal: reset + seed demo da
 npm run emulate:smoke -w functions
 ```
 
-The API is reachable in the emulator at `http://127.0.0.1:5001/ihm-tms-dev/europe-west1/api/api/v1/...`. Point the web app at it with `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:5001/ihm-tms-dev/europe-west1/api`.
+The API is reachable in the emulator at `http://127.0.0.1:5001/demo-ihm-tms/us-east4/api/api/v1/...`. Point the web app at it with `NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:5001/demo-ihm-tms/us-east4/api`.
 
 ## Demo logins (seed) — password `Password123!`
 

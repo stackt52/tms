@@ -41,7 +41,7 @@ Prerequisites: Node 22+, Java 17+ (Firestore emulator), Firebase CLI (`npm i -g 
 ```bash
 npm install
 cp web/.env.example web/.env.local        # already points at the emulators
-npm run emulators                        # Auth :9099 · Firestore :8080 · Functions :5001 · Storage :9199 · UI :4000
+npm run emulators                        # offline project id demo-ihm-tms · Auth :9099 · Firestore :8080 · Functions :5001 · Storage :9199 · UI :4000
 ```
 
 In a second terminal:
@@ -65,20 +65,18 @@ npm run build       # shared typecheck, API bundle, Next.js build
 
 ## Deploying to Firebase
 
-1. Create a Firebase project (Blaze plan) and enable Authentication (Email/Password, Google), Firestore (native mode), Cloud Storage, Cloud Functions and App Hosting. Update `.firebaserc` and the project ids in `web/apphosting.yaml`.
+1. The repo is linked to the Firebase project **`travel-management-system-454ea`** ("Travel Management System") via `.firebaserc`; the web app `IHM TMS Web` is registered and its public SDK config lives in `web/.env.production` and `web/apphosting.yaml`. Before the first deploy, in the Firebase console: upgrade to the Blaze plan, enable Authentication (Email/Password, Google), create the Firestore database (native mode, e.g. `us-east4`), and enable Cloud Storage.
 2. Deploy rules, indexes and the API:
    ```bash
    firebase deploy --only firestore,storage,functions
    ```
-   The API is served at `https://europe-west1-<project>.cloudfunctions.net/api/api/v1/...`.
+   The API is served at `https://us-east4-travel-management-system-454ea.cloudfunctions.net/api/api/v1/...`.
 3. Web app on App Hosting — connect the GitHub repo and set the backend's root directory to `web/`:
    ```bash
-   firebase apphosting:backends:create --project <project>
-   firebase apphosting:secrets:set tms-firebase-api-key
-   firebase apphosting:secrets:set tms-firebase-app-id
+   firebase apphosting:backends:create --project travel-management-system-454ea
    ```
    `web/apphosting.yaml` sets `API_PROXY_ORIGIN` so the browser calls `/api/v1/*` same-origin and Next.js proxies to the function. Pushes to `main` trigger rollouts.
-4. Bootstrap production data: run the master-data/rates/workflow parts of the seed against production once (`GCLOUD_PROJECT=<project> node functions/lib/seed.js --production-config`) or enter them through **Admin → Rates / Workflows / Policy rules / Master data**, then grant `SYSTEM_ADMIN` to the first administrator's `users/{uid}` document.
+4. Bootstrap production data: run the master-data/rates/workflow parts of the seed against production once (the Admin screens) or enter them through **Admin → Rates / Workflows / Policy rules / Master data**, then grant `SYSTEM_ADMIN` to the first administrator's `users/{uid}` document.
 
 ## Policy points that stay configurable (SRS §28)
 

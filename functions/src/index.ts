@@ -4,7 +4,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { createApp } from './app';
 import { runDailyJobs } from './services/jobs';
 
-setGlobalOptions({ region: 'europe-west1', maxInstances: 10, memory: '512MiB', timeoutSeconds: 60 });
+setGlobalOptions({ region: 'us-east4', maxInstances: 10, memory: '512MiB', timeoutSeconds: 60 });
 
 const app = createApp();
 

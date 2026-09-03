@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "ihm-tms-dev"
+    "default": "travel-management-system-454ea",
+    "prod": "travel-management-system-454ea"
   }
 }

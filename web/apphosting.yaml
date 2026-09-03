@@ -1,5 +1,5 @@
-# Firebase App Hosting backend configuration for the TMS web app.
-# Create the backend with `firebase apphosting:backends:create` and point its root directory at `web/`.
+# Firebase App Hosting backend configuration for the TMS web app (project travel-management-system-454ea).
+# Create the backend with `firebase apphosting:backends:create` and set its root directory to `web/`.
 runConfig:
   minInstances: 0
   maxInstances: 4
@@ -8,20 +8,21 @@ runConfig:
   memoryMiB: 512
 
 env:
+  # Firebase web SDK config — public identifiers, not secrets.
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    secret: tms-firebase-api-key
+    value: AIzaSyCv-Ro0DTZiq5FRfA8ZFEfsGY87G_fyazQ
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: ihm-tms-prod.firebaseapp.com
+    value: travel-management-system-454ea.firebaseapp.com
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    value: ihm-tms-prod
+    value: travel-management-system-454ea
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: ihm-tms-prod.appspot.com
+    value: travel-management-system-454ea.firebasestorage.app
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    secret: tms-firebase-app-id
+    value: "1:1097445921421:web:82c4018bf66274f7c488c4"
     availability: [BUILD, RUNTIME]
   - variable: NEXT_PUBLIC_USE_EMULATORS
     value: "false"
@@ -31,5 +32,5 @@ env:
     value: ""
     availability: [BUILD, RUNTIME]
   - variable: API_PROXY_ORIGIN
-    value: https://europe-west1-ihm-tms-prod.cloudfunctions.net/api
+    value: https://us-east4-travel-management-system-454ea.cloudfunctions.net/api
     availability: [BUILD, RUNTIME]

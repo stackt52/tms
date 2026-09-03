@@ -4,7 +4,7 @@
     {
       "name": "emulators",
       "runtimeExecutable": "firebase",
-      "runtimeArgs": ["emulators:start", "--only", "auth,firestore,functions,storage", "--project", "ihm-tms-dev", "--import", "./.emulator-data", "--export-on-exit", "./.emulator-data"],
+      "runtimeArgs": ["emulators:start", "--only", "auth,firestore,functions,storage", "--project", "demo-ihm-tms", "--import", "./.emulator-data", "--export-on-exit", "./.emulator-data"],
       "port": 4000
     },
     {

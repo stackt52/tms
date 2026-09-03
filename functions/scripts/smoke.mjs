@@ -5,11 +5,11 @@
  * plus a few mutations that must be rejected by policy (checklist gate, booking conflict).
  *
  *   node functions/scripts/smoke.mjs
- *   API_BASE=http://127.0.0.1:5001/ihm-tms-dev/europe-west1/api node functions/scripts/smoke.mjs
+ *   API_BASE=http://127.0.0.1:5001/demo-ihm-tms/us-east4/api node functions/scripts/smoke.mjs
  */
 const AUTH = process.env.FIREBASE_AUTH_EMULATOR_HOST ?? '127.0.0.1:9099';
-const PROJECT = process.env.GCLOUD_PROJECT ?? 'ihm-tms-dev';
-const API = (process.env.API_BASE ?? `http://127.0.0.1:5001/${PROJECT}/europe-west1/api`).replace(/\/$/, '') + '/api/v1';
+const PROJECT = process.env.GCLOUD_PROJECT ?? 'demo-ihm-tms';
+const API = (process.env.API_BASE ?? `http://127.0.0.1:5001/${PROJECT}/us-east4/api`).replace(/\/$/, '') + '/api/v1';
 const PASSWORD = 'Password123!';
 
 const tokens = new Map();

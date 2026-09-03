@@ -2,7 +2,7 @@
  * Emulator defaults for the seed script. Imported FIRST by seed.ts so the environment is in place
  * before firebase-admin initialises (ESM import order is preserved by esbuild).
  */
-process.env.GCLOUD_PROJECT ??= 'ihm-tms-dev';
+process.env.GCLOUD_PROJECT ??= 'demo-ihm-tms';
 process.env.FIRESTORE_EMULATOR_HOST ??= '127.0.0.1:8080';
 process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
 process.env.FIREBASE_STORAGE_EMULATOR_HOST ??= '127.0.0.1:9199';
