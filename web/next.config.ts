@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import path from 'node:path';
 
 /**
  * In production (Firebase App Hosting) the browser calls the API same-origin at /api/v1/...
@@ -8,6 +9,9 @@ import type { NextConfig } from 'next';
  */
 const nextConfig: NextConfig = {
   transpilePackages: ['@tms/shared'],
+  // The app imports ../packages/shared, so the bundler/tracing root is the monorepo root.
+  turbopack: { root: path.join(__dirname, '..') },
+  outputFileTracingRoot: path.join(__dirname, '..'),
   reactStrictMode: true,
   devIndicators: { position: 'bottom-right' },
   async rewrites() {
