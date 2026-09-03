@@ -1,0 +1,215 @@
+/* 1f — Fleet & vehicle booking (values copied from the handoff mock) */
+.fleet-split > .main {
+  flex: 1.9;
+}
+.fleet-split > .side {
+  flex: 1;
+}
+.fleet-card {
+  padding: 20px 24px;
+}
+.fleet-scroll {
+  overflow-x: auto;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+.fleet-grid {
+  display: grid;
+  grid-template-columns: 170px repeat(var(--days, 7), minmax(0, 1fr));
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 6px;
+  min-width: 630px;
+}
+.fleet-grid--month {
+  min-width: 1120px;
+}
+.fleet-grid--head {
+  font-size: 11.5px;
+  color: var(--md-on-surface-variant);
+  font-weight: 700;
+  text-align: center;
+}
+.fleet-grid--head .fleet-head--we {
+  color: var(--md-outline-variant);
+}
+.fleet-grid--head .fleet-head--today {
+  color: var(--md-primary);
+}
+.fleet-grid--month.fleet-grid--head {
+  font-size: 10.5px;
+}
+.fleet-veh {
+  font-size: 12.5px;
+  min-width: 0;
+  padding-right: 6px;
+}
+.fleet-veh__name {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fleet-veh__meta {
+  color: var(--md-outline);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fleet-bar {
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  width: 100%;
+  line-height: 1.2;
+  transition: box-shadow var(--dur-short), filter var(--dur-short);
+}
+.fleet-grid--month .fleet-bar {
+  padding: 6px 8px;
+  font-size: 10.5px;
+}
+button.fleet-bar:hover {
+  filter: brightness(0.96);
+}
+.fleet-bar--assigned {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+.fleet-bar--self {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+.fleet-bar--pending {
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+}
+.fleet-bar--service {
+  background: var(--md-error-container);
+  color: var(--md-on-error-container);
+}
+.fleet-bar--past {
+  opacity: 0.6;
+}
+.fleet-bar--selected {
+  box-shadow: 0 0 0 2px var(--md-primary);
+}
+.fleet-free {
+  background: var(--md-surface-container);
+  border-radius: var(--radius-pill);
+  height: 26px;
+  width: 100%;
+}
+.fleet-free--today {
+  background: var(--md-surface-high);
+}
+.fleet-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  font-size: 11.5px;
+  color: var(--md-on-surface-variant);
+  flex-wrap: wrap;
+}
+.fleet-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fleet-legend__sw {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* booking sheet */
+.fleet-sheet__title {
+  font-weight: 750;
+  font-size: 15px;
+}
+.fleet-sheet__meta {
+  font-size: 12.5px;
+  color: var(--md-on-surface-variant);
+  margin-top: 2px;
+}
+.fleet-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 14px;
+  font-size: 13px;
+}
+.fleet-step {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.fleet-step--pending {
+  color: var(--md-outline);
+}
+.fleet-step--error {
+  color: var(--md-error);
+  font-weight: 650;
+}
+.fleet-step__sub {
+  font-size: 11.5px;
+  color: var(--md-outline);
+  margin-left: 6px;
+  font-weight: 400;
+}
+.fleet-photos {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  align-items: center;
+}
+.fleet-photo {
+  width: 74px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--md-surface-container);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+  flex: none;
+  color: var(--md-outline);
+  transition: background var(--dur-short);
+}
+button.fleet-photo:hover {
+  background: var(--md-surface-high);
+}
+.fleet-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fleet-photos__cap {
+  font-size: 11px;
+  color: var(--md-outline);
+  align-self: center;
+  line-height: 1.3;
+}
+.fleet-kv {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 13px;
+}
+.fleet-kv .kv > :first-child {
+  color: var(--md-on-surface-variant);
+}
+
+/* bar tones reused in the book dialog conflict list */
+.fleet-conflict {
+  font-size: 12.5px;
+  padding: 4px 0;
+}

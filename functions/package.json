@@ -1,0 +1,40 @@
+{
+  "name": "functions",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IHM TMS REST API \u2014 Express on Cloud Functions (2nd gen).",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "dev": "npm run build && concurrently -n build,emu -c yellow,magenta \"node esbuild.mjs --watch\" \"firebase emulators:start --only auth,firestore,functions,storage --import ../.emulator-data --export-on-exit ../.emulator-data\"",
+    "seed": "node esbuild.mjs --seed && node lib/seed.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "smoke": "node scripts/smoke.mjs",
+    "emulate:smoke": "npm run build && node esbuild.mjs --seed && cd .. && firebase emulators:exec --project ihm-tms-dev --only auth,firestore,functions,storage \"node functions/lib/seed.js && node functions/scripts/smoke.mjs\""
+  },
+  "dependencies": {
+    "@tms/shared": "*",
+    "busboy": "^1.6.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.3.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.2.0"
+  }
+}

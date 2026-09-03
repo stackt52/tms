@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Shared policy engine — typecheck & tests
+        run: npm run typecheck -w packages/shared && npm run test -w packages/shared
+      - name: API — typecheck, tests, bundle
+        run: npm run typecheck -w functions && npm run test -w functions && npm run build -w functions
+      - name: Web — lint, typecheck, build
+        env:
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ci
+          NEXT_PUBLIC_USE_EMULATORS: 'false'
+        run: npm run lint -w web && npm run typecheck -w web && npm run build -w web

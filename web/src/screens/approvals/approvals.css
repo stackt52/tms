@@ -1,0 +1,178 @@
+/* 1c — Approval queue (split view, values from the handoff mock) */
+.apq {
+  display: flex;
+  min-height: 640px;
+  align-items: stretch;
+}
+.apq__list {
+  width: 390px;
+  flex: none;
+  border-right: 1px solid var(--md-surface-high);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.apq__title {
+  font-size: 22px;
+  font-weight: 650;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.apq__count {
+  background: var(--md-primary);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.apq__tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 6px;
+  flex-wrap: wrap;
+}
+.apq__tab {
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--md-surface-container);
+  color: var(--md-on-surface-variant);
+  transition: background var(--dur-short), color var(--dur-short);
+}
+.apq__tab:hover {
+  background: var(--md-surface-high);
+}
+.apq__tab--active {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  font-weight: 700;
+}
+.apq__card-name {
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.apq__card-sub {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.apq__tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.apq__tags .m3-chip {
+  font-size: 11.5px;
+  padding: 3px 10px;
+}
+.apq__detail {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 30px;
+}
+.apq__head {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
+.apq__meta {
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+  margin-top: 4px;
+}
+.apq__body {
+  margin-top: 18px;
+  gap: 18px;
+}
+.apq__card-title {
+  font-weight: 750;
+  font-size: 14.5px;
+  margin-bottom: 12px;
+}
+.apq__card-title small {
+  color: var(--md-on-surface-variant);
+  font-weight: 400;
+  font-size: 12px;
+}
+.apq__side-title {
+  font-weight: 750;
+  font-size: 13.5px;
+  margin-bottom: 10px;
+}
+.apq__checks {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.apq__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.apq__actions .m3-btn {
+  font-size: 13.5px;
+  padding: 11px 26px;
+}
+.apq__actions .m3-btn--outlined {
+  padding: 10px 22px;
+}
+.apq__actions .m3-btn--danger-text {
+  padding: 10px 14px;
+}
+.apq__elig {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: var(--md-secondary-container);
+  border-radius: 18px;
+  padding: 10px;
+}
+.apq__elig .m3-stat {
+  min-width: 96px;
+}
+.apq__section-label {
+  font-size: 11.5px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--md-on-surface-variant);
+  margin-bottom: 4px;
+}
+.apq__files {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1023px) {
+  .apq {
+    flex-direction: column;
+    min-height: 0;
+  }
+  .apq__list {
+    width: 100%;
+    border-right: 0;
+  }
+  .apq__detail {
+    padding: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .apq__list {
+    padding: 14px 16px;
+  }
+  .apq__detail {
+    padding: 14px 16px calc(24px + 88px);
+  }
+  .apq__head {
+    font-size: 18px;
+  }
+}

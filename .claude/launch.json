@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "emulators",
+      "runtimeExecutable": "firebase",
+      "runtimeArgs": ["emulators:start", "--only", "auth,firestore,functions,storage", "--project", "ihm-tms-dev", "--import", "./.emulator-data", "--export-on-exit", "./.emulator-data"],
+      "port": 4000
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "-w", "web"],
+      "port": 3000
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+/* 1j — Admin (values copied from the handoff mock) */
+.admin-split > .main {
+  flex: 1.6;
+}
+.admin-split > .side {
+  flex: 1.2;
+}
+.admin-card {
+  padding: 20px 24px;
+}
+.admin-title {
+  font-weight: 750;
+  font-size: 15px;
+}
+.admin-title--sm {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.admin-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-edit {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--md-on-surface-variant);
+  flex: none;
+  transition: background var(--dur-short);
+}
+.admin-edit:hover {
+  background: rgba(0, 105, 109, 0.08);
+  color: var(--md-primary);
+}
+.admin-rate-group + .admin-rate-group .tbl-row:first-child {
+  border-top: 1px solid var(--md-surface-high);
+}
+
+/* workflow chain */
+.wf-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 650;
+}
+.wf-pill {
+  background: var(--md-surface-container);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  white-space: nowrap;
+}
+.wf-pill--last {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+.wf-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--md-primary);
+  font-weight: 650;
+  font-size: 12.5px;
+  border-radius: var(--radius-pill);
+  padding: 4px 6px;
+  margin-left: -6px;
+  transition: background var(--dur-short);
+}
+.wf-edit:hover {
+  background: rgba(0, 105, 109, 0.08);
+}
+.wf-stage {
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 18px;
+  padding: 16px 16px 14px;
+  background: #fff;
+}
+.wf-stage__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.wf-stage__num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  font-size: 12px;
+  font-weight: 750;
+  display: grid;
+  place-items: center;
+}
+
+/* policy toggles */
+.pol-row {
+  display: flex;
+  align-items: center;
+  padding: 7px 0;
+  font-size: 13px;
+  gap: 12px;
+}
+.pol-row > .m3-switch {
+  margin-left: auto;
+}
+.thr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 14px;
+  margin-top: 6px;
+}
+@media (max-width: 767px) {
+  .thr-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* role / cost-centre toggle chips */
+.role-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.role-chip {
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 650;
+  background: var(--md-surface-container);
+  color: var(--md-on-surface-variant);
+  transition: background var(--dur-short), color var(--dur-short);
+}
+.role-chip:hover {
+  background: var(--md-surface-high);
+}
+.role-chip--on {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+}
+@media (max-width: 767px) {
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.dlg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 14px;
+}
+.dlg-grid > .dlg-wide {
+  grid-column: 1 / -1;
+}
+@media (max-width: 767px) {
+  .dlg-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.admin-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}

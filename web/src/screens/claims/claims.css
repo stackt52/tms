@@ -1,0 +1,98 @@
+/* 1g — Mileage claim (values copied from the handoff mock) */
+.mil-split > .main {
+  flex: 1.5;
+}
+.mil-split > .side {
+  flex: 1;
+}
+.mil-card {
+  padding: 26px 30px;
+}
+.mil-row {
+  display: flex;
+  gap: 14px;
+}
+.mil-row + .mil-row {
+  margin-top: 18px;
+}
+/* the mock draws read-only fields as plain outlined fields */
+.mil-ro .m3-field--tinted {
+  background: #fff;
+  border-color: var(--md-outline);
+}
+.mil-dist .m3-field__input {
+  font-weight: 700;
+}
+.mil-evidence {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+.mil-evidence > * {
+  flex: 1;
+  min-width: 0;
+}
+.mil-tile--static {
+  cursor: default;
+  opacity: 0.85;
+}
+@media (max-width: 767px) {
+  .mil-row {
+    flex-wrap: wrap;
+  }
+  .mil-row > * {
+    flex: 1 1 100% !important;
+    width: auto !important;
+  }
+  .mil-evidence {
+    flex-direction: column;
+  }
+}
+
+.mil-calc {
+  font-size: 13.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.mil-calc__row {
+  display: flex;
+}
+.mil-calc__row > :last-child {
+  margin-left: auto;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mil-calc__total {
+  display: flex;
+  border-top: 1px solid rgba(0, 32, 32, 0.2);
+  padding-top: 10px;
+  align-items: baseline;
+  font-weight: 700;
+}
+.mil-calc__figure {
+  margin-left: auto;
+  font-weight: 800;
+  font-size: 22px;
+  white-space: nowrap;
+}
+.mil-policy {
+  font-size: 12.5px;
+  color: var(--md-on-surface-variant);
+  padding: 20px 24px;
+}
+.mil-policy__title {
+  font-weight: 750;
+  color: var(--md-on-surface);
+  font-size: 13.5px;
+  margin-bottom: 8px;
+}
+
+/* list */
+.claim-row {
+  cursor: pointer;
+}
+.claim-form {
+  max-width: 760px;
+}

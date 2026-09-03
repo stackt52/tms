@@ -1,0 +1,145 @@
+/* Finance screens — 1h advances queue, liquidations list, 1i external-party payments */
+.fin-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.fin-summary {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.fin-nav {
+  margin-top: 14px;
+}
+.fin-nav .m3-pilltabs__item {
+  text-decoration: none;
+}
+.fin-table {
+  padding: 10px 8px;
+  margin-top: 18px;
+}
+.fin-table .tbl-row > span {
+  min-width: 0;
+  padding-right: 8px;
+}
+.fin-sub {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.fin-row-link {
+  color: inherit;
+}
+.fin-row-link:hover {
+  color: inherit;
+}
+
+/* 1h — advances */
+.adv-row--selected {
+  box-shadow: inset 0 0 0 2px var(--md-primary);
+  border-radius: 16px;
+}
+.adv-footer {
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 18px 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.adv-footer__text {
+  font-size: 13px;
+  color: var(--md-on-surface-variant);
+  flex: 1;
+  min-width: 260px;
+}
+.adv-footer__text b {
+  color: var(--md-on-surface);
+}
+.adv-ms.m3-chip {
+  padding: 5px 12px;
+}
+
+/* 1i — external-party payments */
+.ext-split {
+  margin-top: 18px;
+}
+.ext-split > .main {
+  flex: 1.9;
+}
+.ext-table {
+  padding: 14px 10px;
+}
+.ext-table .tbl-head {
+  padding: 10px 18px;
+}
+.ext-table .tbl-row {
+  padding: 12px 18px;
+  font-size: 13px;
+}
+.ext-table .tbl-row > span {
+  min-width: 0;
+  padding-right: 8px;
+}
+.ext-name {
+  font-weight: 650;
+}
+.ext-org {
+  font-size: 11.5px;
+  color: var(--md-on-surface-variant);
+  font-weight: 400;
+}
+.ext-na {
+  color: var(--md-outline-variant);
+}
+.ext-warn {
+  color: var(--md-warning-text);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  cursor: help;
+}
+.ext-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 0;
+  font-size: 12px;
+  color: var(--md-outline);
+}
+.ext-card-title {
+  font-weight: 750;
+  font-size: 13.5px;
+  margin-bottom: 10px;
+}
+.ext-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.ext-actions .m3-btn {
+  font-size: 13px;
+  padding: 10px 22px;
+}
+.ext-actions .m3-btn--outlined {
+  padding: 9px 18px;
+}
+.ext-actions .m3-btn--danger-text {
+  padding: 9px 12px;
+}
+.ext-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px) {
+  .ext-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,63 @@
+/* ---------- Requests list & detail ---------- */
+.req-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 14px 18px;
+  color: var(--md-on-surface);
+  min-height: 60px;
+  transition: background var(--dur-short), transform var(--dur-short) var(--ease-emphasized);
+}
+.req-card:hover {
+  background: var(--md-surface-low);
+  color: var(--md-on-surface);
+}
+.req-card__title {
+  font-weight: 700;
+  font-size: 14px;
+}
+.req-card__meta {
+  font-size: 12.5px;
+  color: var(--md-on-surface-variant);
+  margin-top: 2px;
+}
+.req-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.req-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.req-actions .m3-btn {
+  justify-content: flex-start;
+}
+.req-lines .tbl-row {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+.req-lines .tbl-head {
+  padding: 8px 14px;
+}
+.req-file {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.req-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 13.5px;
+}
+@media (max-width: 767px) {
+  .req-card {
+    flex-wrap: wrap;
+  }
+}

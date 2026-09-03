@@ -1,0 +1,26 @@
+{
+  "name": "ihm-tms",
+  "private": true,
+  "version": "0.1.0",
+  "description": "IHM Southern Africa Travel Management System — Next.js web app, Express REST API on Cloud Functions, Firestore.",
+  "workspaces": [
+    "packages/shared",
+    "functions",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w functions\" \"npm run dev -w web\"",
+    "emulators": "firebase emulators:start --import ./.emulator-data --export-on-exit ./.emulator-data",
+    "seed": "npm run seed -w functions",
+    "build": "npm run build -w packages/shared && npm run build -w functions && npm run build -w web",
+    "test": "npm run test -w packages/shared && npm run test -w functions",
+    "lint": "npm run lint -w web",
+    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w functions && npm run typecheck -w web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
