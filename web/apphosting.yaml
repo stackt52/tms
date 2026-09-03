@@ -1,5 +1,5 @@
 # Firebase App Hosting backend configuration for the TMS web app (project travel-management-system-454ea).
-# Create the backend with `firebase apphosting:backends:create` and set its root directory to `web/`.
+# Backend "tms" is linked to github.com/stackt52/tms with root directory `web`; pushes to `main` roll out automatically.
 runConfig:
   minInstances: 0
   maxInstances: 4
@@ -8,29 +8,41 @@ runConfig:
   memoryMiB: 512
 
 env:
-  # Firebase web SDK config — public identifiers, not secrets.
+  # Firebase web SDK config - public identifiers, not secrets.
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     value: AIzaSyCv-Ro0DTZiq5FRfA8ZFEfsGY87G_fyazQ
-    availability: [BUILD, RUNTIME]
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
     value: travel-management-system-454ea.firebaseapp.com
-    availability: [BUILD, RUNTIME]
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: travel-management-system-454ea
-    availability: [BUILD, RUNTIME]
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
     value: travel-management-system-454ea.firebasestorage.app
-    availability: [BUILD, RUNTIME]
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     value: "1:1097445921421:web:82c4018bf66274f7c488c4"
-    availability: [BUILD, RUNTIME]
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: NEXT_PUBLIC_USE_EMULATORS
     value: "false"
-    availability: [BUILD, RUNTIME]
-  # Same-origin API: the browser calls /api/v1/*, Next.js proxies to the Cloud Function.
-  - variable: NEXT_PUBLIC_API_BASE_URL
-    value: ""
-    availability: [BUILD, RUNTIME]
+    availability:
+      - BUILD
+      - RUNTIME
+  # Same-origin API: the browser calls /api/v1/* and Next.js proxies it to the Cloud Function
+  # (NEXT_PUBLIC_API_BASE_URL is intentionally unset so the client uses a relative URL).
   - variable: API_PROXY_ORIGIN
     value: https://us-east4-travel-management-system-454ea.cloudfunctions.net/api
-    availability: [BUILD, RUNTIME]
+    availability:
+      - BUILD
+      - RUNTIME
