@@ -48,7 +48,7 @@ In a second terminal:
 
 ```bash
 npm run seed                             # demo users + data (emulator only)
-npm run dev -w web                       # http://localhost:3000
+npm --prefix web run dev                 # http://localhost:3000
 ```
 
 Sign in with a demo persona (password `Password123!`), e.g. `chanda.mwansa@ihm.org.zm` (traveller), `thandiwe.mulenga@ihm.org.zm` (supervisor), `lombe.musonda@ihm.org.zm` (finance), `grace.nkonde@ihm.org.zm` (office management / fleet), `admin@ihm.org.zm` (all roles). The login page lists them when emulators are enabled.

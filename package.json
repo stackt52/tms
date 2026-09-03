@@ -5,17 +5,17 @@
   "description": "IHM Southern Africa Travel Management System \u2014 Next.js web app, Express REST API on Cloud Functions, Firestore.",
   "workspaces": [
     "packages/shared",
-    "functions",
-    "web"
+    "functions"
   ],
   "scripts": {
-    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w functions\" \"npm run dev -w web\"",
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w functions\" \"npm --prefix web run dev\"",
     "emulators": "firebase emulators:start --project demo-ihm-tms --import ./.emulator-data --export-on-exit ./.emulator-data",
     "seed": "npm run seed -w functions",
-    "build": "npm run build -w packages/shared && npm run build -w functions && npm run build -w web",
+    "build": "npm run build -w packages/shared && npm run build -w functions && npm --prefix web run build",
     "test": "npm run test -w packages/shared && npm run test -w functions",
-    "lint": "npm run lint -w web",
-    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w functions && npm run typecheck -w web"
+    "lint": "npm --prefix web run lint",
+    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w functions && npm --prefix web run typecheck",
+    "postinstall": "npm --prefix web install --no-audit --no-fund"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

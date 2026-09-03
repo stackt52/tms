@@ -8,7 +8,10 @@ import type { NextConfig } from 'next';
  */
 const nextConfig: NextConfig = {
   // @tms/shared is vendored into src/shared by scripts/sync-shared.mjs (see package.json pre* scripts).
-  turbopack: { resolveAlias: { '@tms/shared': './src/shared/index.ts' } },
+  // Pin the project root to web/ so a monorepo checkout (root lockfile) doesn't move the
+  // standalone output to .next/standalone/web/, which the App Hosting adapter can't find.
+  turbopack: { root: __dirname, resolveAlias: { '@tms/shared': './src/shared/index.ts' } },
+  outputFileTracingRoot: __dirname,
   reactStrictMode: true,
   devIndicators: { position: 'bottom-right' },
   async rewrites() {

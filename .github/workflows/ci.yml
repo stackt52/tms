@@ -23,4 +23,4 @@ jobs:
         env:
           NEXT_PUBLIC_FIREBASE_PROJECT_ID: ci
           NEXT_PUBLIC_USE_EMULATORS: 'false'
-        run: npm run lint -w web && npm run typecheck -w web && npm run build -w web
+        run: npm --prefix web run lint && npm --prefix web run typecheck && npm --prefix web run build
