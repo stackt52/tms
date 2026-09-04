@@ -8,14 +8,14 @@ import { DEMO_PASSWORD, DEMO_PERSONAS } from '@/lib/demo';
 import '@/components/shell/shell.css';
 
 export function LoginScreen() {
-  const { firebaseUser, initialising, signInWithPassword, signInWithGoogle } = useAuth();
+  const { firebaseUser, initialising, signInWithPassword, signInWithGoogle, resetPassword } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get('next') || '/';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
-  const { error } = useToast();
+  const { error, success } = useToast();
 
   useEffect(() => {
     if (!initialising && firebaseUser) router.replace(next);
@@ -82,6 +82,25 @@ export function LoginScreen() {
             <Button type="submit" size="lg" block loading={busy === 'form'}>
               Sign in
             </Button>
+            <button
+              type="button"
+              className="m3-btn m3-btn--text m3-btn--sm"
+              style={{ alignSelf: 'flex-start' }}
+              disabled={!!busy}
+              onClick={() => {
+                if (!email) {
+                  error(new Error('Enter your work email first, then choose “Forgot password”.'));
+                  return;
+                }
+                setBusy('reset');
+                resetPassword(email)
+                  .then(() => success(`Password reset email sent to ${email}`))
+                  .catch((e) => error(e, 'Could not send reset email'))
+                  .finally(() => setBusy(null));
+              }}
+            >
+              Forgot password? Email me a reset link
+            </button>
           </form>
           <Button variant="outlined" block className="mt12" icon="account_circle" loading={busy === 'google'} onClick={() => {
             setBusy('google');

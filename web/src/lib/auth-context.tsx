@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, type User } from 'firebase/auth';
+import { onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { MeResponse } from '@tms/shared';
 import { firebaseAuth, googleProvider } from './firebase';
@@ -15,6 +15,7 @@ interface AuthState {
   meError: Error | null;
   signInWithPassword: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
 }
@@ -47,6 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = useCallback(async () => {
     await signInWithPopup(firebaseAuth(), googleProvider);
   }, []);
+  const resetPassword = useCallback(async (email: string) => {
+    await sendPasswordResetEmail(firebaseAuth(), email);
+  }, []);
   const logout = useCallback(async () => {
     await signOut(firebaseAuth());
     qc.clear();
@@ -64,10 +68,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       meError: (meQuery.error as Error | null) ?? null,
       signInWithPassword,
       signInWithGoogle,
+      resetPassword,
       logout,
       refreshMe,
     }),
-    [firebaseUser, initialising, meQuery.data, meQuery.isLoading, meQuery.error, signInWithPassword, signInWithGoogle, logout, refreshMe],
+    [firebaseUser, initialising, meQuery.data, meQuery.isLoading, meQuery.error, signInWithPassword, signInWithGoogle, resetPassword, logout, refreshMe],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

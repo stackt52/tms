@@ -2,6 +2,7 @@ import { build, context } from 'esbuild';
 
 const watch = process.argv.includes('--watch');
 const seed = process.argv.includes('--seed');
+const seedProd = process.argv.includes('--seed-prod');
 
 const common = {
   bundle: true,
@@ -16,9 +17,11 @@ const common = {
   alias: { '@tms/shared': new URL('../packages/shared/src/index.ts', import.meta.url).pathname },
 };
 
-const targets = seed
-  ? [{ entryPoints: ['src/seed.ts'], outfile: 'lib/seed.js' }]
-  : [{ entryPoints: ['src/index.ts'], outfile: 'lib/index.js' }];
+const targets = seedProd
+  ? [{ entryPoints: ['src/seedProd.ts'], outfile: 'lib/seedProd.js' }]
+  : seed
+    ? [{ entryPoints: ['src/seed.ts'], outfile: 'lib/seed.js' }]
+    : [{ entryPoints: ['src/index.ts'], outfile: 'lib/index.js' }];
 
 for (const t of targets) {
   const opts = { ...common, ...t };
