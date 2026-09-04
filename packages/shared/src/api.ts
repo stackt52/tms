@@ -390,6 +390,30 @@ export interface CreateWorkflowVersionBody {
   stages: WorkflowStage[];
   note?: string;
 }
+export interface CreateUserBody {
+  email: string;
+  displayName: string;
+  roles: Role[];
+  title?: string;
+  departmentId?: string;
+  unitId?: string;
+  supervisorId?: string;
+  dutyStationId?: string;
+  costCentreIds?: string[];
+  province?: string;
+  phone?: string;
+  /** Email the person a set-password link (Firebase password reset flow). Default true. */
+  sendInvite?: boolean;
+}
+export interface CreateUserResponse {
+  user: UserProfile;
+  /** True when the set-password email was sent. */
+  inviteSent: boolean;
+  /** Set-password link the admin can share manually if email does not arrive. */
+  setupLink?: string;
+  /** True when the Auth account already existed and only the profile was (re)created. */
+  existedInAuth: boolean;
+}
 export interface UpdateUserBody {
   roles?: Role[];
   departmentId?: string;

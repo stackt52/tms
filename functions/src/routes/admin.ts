@@ -7,7 +7,7 @@ import { parseBody, wrap } from '../lib/http';
 import { COL } from '../lib/firebase';
 import { getAllDocs } from '../lib/query';
 import { loadConfig } from '../services/config';
-import { createRate, createWorkflowVersion, listRates, listWorkflows, overview, patchPolicy, patchRate, updateUser, upsertMaster, upsertVendor } from '../services/admin';
+import { createRate, createWorkflowVersion, listRates, listWorkflows, overview, patchPolicy, patchRate, updateUser, upsertMaster, upsertVendor, createUser } from '../services/admin';
 
 const RateBody = z.object({
   key: z.enum(['ADVANCE_PERCENTAGE', 'MILEAGE_RATE', 'EXTERNAL_TRANSPORT_ALLOWANCE', 'EXTERNAL_DSA', 'EXTERNAL_LUNCH', 'PER_DIEM_DOMESTIC', 'PER_DIEM_INTERNATIONAL', 'STATIONERY_CAP']),
@@ -58,6 +58,22 @@ const VendorBody = z.object({
   active: z.boolean().optional(),
   approvedRate: z.string().max(120).optional(),
 });
+const CreateUserBody = z
+  .object({
+    email: z.string().email(),
+    displayName: z.string().min(2).max(80),
+    roles: z.array(z.enum(ROLES)).min(1),
+    title: z.string().max(80).optional(),
+    departmentId: z.string().optional(),
+    unitId: z.string().optional(),
+    supervisorId: z.string().optional(),
+    dutyStationId: z.string().optional(),
+    costCentreIds: z.array(z.string()).optional(),
+    province: z.string().max(40).optional(),
+    phone: z.string().max(30).optional(),
+    sendInvite: z.boolean().optional(),
+  })
+  .strict();
 const UserBody = z
   .object({
     roles: z.array(z.enum(ROLES)).min(1).optional(),
@@ -100,6 +116,7 @@ export function adminRouter(): Router {
   r.patch('/vendors/:id', wrap(async (req, res) => res.json(await upsertVendor(actorOf(req), parseBody(VendorBody, req.body) as Partial<Vendor>, req.params.id))));
 
   r.get('/users', wrap(async (_req, res) => res.json({ items: await getAllDocs<UserProfile>(COL.users) })));
+  r.post('/users', wrap(async (req, res) => res.status(201).json(await createUser(actorOf(req), parseBody(CreateUserBody, req.body)))));
   r.patch('/users/:id', wrap(async (req, res) => res.json(await updateUser(actorOf(req), req.params.id, parseBody(UserBody, req.body)))));
 
   for (const kind of MASTER_KINDS) {

@@ -2,10 +2,11 @@
 import { useMemo, useState } from 'react';
 import { ROLES, ROLE_LABELS, type AdminOverview, type Role, type UserProfile } from '@tms/shared';
 import { Avatar, Button, Card, CheckRow, Chip, Dialog, EmptyState, Icon, SelectField, Switch, TextField, useToast } from '@/components/m3';
-import { useUpdateUser } from '@/lib/queries';
+import { useCreateUser, useUpdateUser } from '@/lib/queries';
 
 export function UsersTab({ data }: { data: AdminOverview }) {
   const [editing, setEditing] = useState<UserProfile | null>(null);
+  const [adding, setAdding] = useState(false);
   const [filter, setFilter] = useState('');
   const units = useMemo(() => new Map(data.masterData.units.map((u) => [u.id, u.name])), [data.masterData.units]);
   const users = useMemo(() => {
@@ -26,6 +27,9 @@ export function UsersTab({ data }: { data: AdminOverview }) {
             <div className="admin-title">Users &amp; roles</div>
             <div className="spacer" />
             <TextField label="Filter" placeholder="name, email or role" icon="search" style={{ width: 240 }} value={filter} onChange={(e) => setFilter(e.target.value)} />
+            <Button variant="tonal" size="sm" icon="person_add" onClick={() => setAdding(true)}>
+              Add user
+            </Button>
           </div>
           <div className="tbl-compact tbl-scroll">
             <div>
@@ -87,6 +91,7 @@ export function UsersTab({ data }: { data: AdminOverview }) {
         </Card>
       </div>
       {editing ? <UserDialog user={editing} data={data} onClose={() => setEditing(null)} /> : null}
+      {adding ? <NewUserDialog data={data} onClose={() => setAdding(false)} /> : null}
     </div>
   );
 }
@@ -184,6 +189,166 @@ function UserDialog({ user, data, onClose }: { user: UserProfile; data: AdminOve
         <div className="pol-row" style={{ padding: 0 }}>
           <span>Active account — can sign in and submit requests</span>
           <Switch checked={f.active} onChange={(v) => set('active', v)} label="Active" />
+        </div>
+      </div>
+    </Dialog>
+  );
+}
+
+function NewUserDialog({ data, onClose }: { data: AdminOverview; onClose: () => void }) {
+  const toast = useToast();
+  const create = useCreateUser();
+  const md = data.masterData;
+  const [f, setF] = useState({
+    displayName: '',
+    email: '',
+    title: '',
+    roles: ['TRAVELLER'] as Role[],
+    departmentId: '',
+    unitId: '',
+    supervisorId: '',
+    dutyStationId: md.locations.find((l) => l.isDutyStation)?.id ?? '',
+    costCentreIds: [] as string[],
+    province: 'Lusaka',
+    sendInvite: true,
+  });
+  const [result, setResult] = useState<{ email: string; inviteSent: boolean; setupLink?: string; existedInAuth: boolean } | null>(null);
+  const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((s) => ({ ...s, [k]: v }));
+  const unitOptions = md.units.filter((u) => !f.departmentId || u.departmentId === f.departmentId);
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim());
+  const nameOk = f.displayName.trim().length >= 2;
+  const blocker = !nameOk ? 'enter a name' : !emailOk ? 'enter a valid email' : f.roles.length === 0 ? 'pick at least one role' : null;
+
+  const save = () =>
+    create.mutate(
+      {
+        email: f.email.trim(),
+        displayName: f.displayName.trim(),
+        roles: f.roles,
+        title: f.title.trim() || undefined,
+        departmentId: f.departmentId || undefined,
+        unitId: f.unitId || undefined,
+        supervisorId: f.supervisorId || undefined,
+        dutyStationId: f.dutyStationId || undefined,
+        costCentreIds: f.costCentreIds,
+        province: f.province.trim() || undefined,
+        sendInvite: f.sendInvite,
+      },
+      {
+        onSuccess: (r) => {
+          toast.success(`${r.user.displayName} added${r.inviteSent ? ' — invite email sent' : ''}`);
+          setResult({ email: r.user.email, inviteSent: r.inviteSent, setupLink: r.setupLink, existedInAuth: r.existedInAuth });
+        },
+        onError: (e) => toast.error(e, 'Could not add user'),
+      },
+    );
+
+  if (result) {
+    return (
+      <Dialog
+        open
+        onClose={onClose}
+        title="User added"
+        subtitle={result.email}
+        actions={
+          <Button onClick={onClose} icon="check">
+            Done
+          </Button>
+        }
+      >
+        <div className="col g12 mt8" style={{ fontSize: 13.5 }}>
+          <div className="row g8">
+            <Icon name={result.inviteSent ? 'mark_email_read' : 'mail'} filled={result.inviteSent} size={20} color="var(--md-primary)" />
+            <span>{result.inviteSent ? 'A set-password email has been sent. They can also use “Forgot password” on the sign-in page.' : 'No email was sent. Share the set-password link below, or ask them to use “Forgot password” on the sign-in page.'}</span>
+          </div>
+          {result.existedInAuth ? <div className="t-caption">This email already had a sign-in account; its TMS profile and roles were created now.</div> : null}
+          {result.setupLink ? (
+            <div className="col g6">
+              <div className="t-label">Set-password link</div>
+              <div className="row g8">
+                <TextField label="Link" readOnly value={result.setupLink} onFocus={(e) => e.currentTarget.select()} style={{ flex: 1 }} />
+                <Button
+                  variant="tonal"
+                  size="sm"
+                  icon="content_copy"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(result.setupLink!).then(() => toast.success('Link copied'));
+                  }}
+                >
+                  Copy
+                </Button>
+              </div>
+              <div className="t-caption">The link expires after an hour; a new one can be sent any time with “Forgot password”.</div>
+            </div>
+          ) : null}
+        </div>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Dialog
+      open
+      wide
+      onClose={onClose}
+      title="Add user"
+      subtitle="Creates the sign-in account and TMS profile. The person sets their own password from the emailed link."
+      actions={
+        <>
+          <Button variant="text" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button loading={create.isPending} disabled={!!blocker} disabledLabel={`Add user — ${blocker}`} onClick={save} icon="person_add">
+            Add user
+          </Button>
+        </>
+      }
+    >
+      <div className="col g18 mt12">
+        <div className="dlg-grid">
+          <TextField label="Full name" value={f.displayName} onChange={(e) => set('displayName', e.target.value)} autoFocus />
+          <TextField label="Work email" type="email" value={f.email} onChange={(e) => set('email', e.target.value)} error={f.email && !emailOk ? 'Enter a valid email address' : undefined} />
+          <TextField label="Job title" value={f.title} onChange={(e) => set('title', e.target.value)} />
+          <TextField label="Province (for mileage claims)" value={f.province} onChange={(e) => set('province', e.target.value)} />
+        </div>
+        <div>
+          <div className="t-label mb8">Roles</div>
+          <div className="role-grid">
+            {ROLES.map((r) => (
+              <CheckRow key={r} checked={f.roles.includes(r)} onChange={(v) => set('roles', v ? [...f.roles, r] : f.roles.filter((x) => x !== r))}>
+                {ROLE_LABELS[r]}
+              </CheckRow>
+            ))}
+          </div>
+        </div>
+        <div className="dlg-grid">
+          <SelectField
+            label="Department"
+            placeholder="—"
+            options={md.departments.map((d) => ({ value: d.id, label: d.name }))}
+            value={f.departmentId}
+            onChange={(e) => setF((s) => ({ ...s, departmentId: e.target.value, unitId: md.units.some((u) => u.id === s.unitId && u.departmentId === e.target.value) ? s.unitId : '' }))}
+          />
+          <SelectField label="Unit" placeholder="—" options={unitOptions.map((u) => ({ value: u.id, label: u.name }))} value={f.unitId} onChange={(e) => set('unitId', e.target.value)} />
+          <SelectField label="Supervisor" placeholder="—" options={data.users.filter((u) => u.active).map((u) => ({ value: u.id, label: u.displayName }))} value={f.supervisorId} onChange={(e) => set('supervisorId', e.target.value)} />
+          <SelectField label="Duty station" placeholder="—" options={md.locations.filter((l) => l.isDutyStation).map((l) => ({ value: l.id, label: l.name }))} value={f.dutyStationId} onChange={(e) => set('dutyStationId', e.target.value)} />
+        </div>
+        <div>
+          <div className="t-label mb8">Cost centres</div>
+          <div className="role-chips">
+            {md.costCentres.map((c) => {
+              const on = f.costCentreIds.includes(c.id);
+              return (
+                <button key={c.id} type="button" className={`role-chip ${on ? 'role-chip--on' : ''}`} aria-pressed={on} onClick={() => set('costCentreIds', on ? f.costCentreIds.filter((x) => x !== c.id) : [...f.costCentreIds, c.id])}>
+                  {c.id} · {c.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="pol-row" style={{ padding: 0 }}>
+          <span>Email a set-password link now</span>
+          <Switch checked={f.sendInvite} onChange={(v) => set('sendInvite', v)} label="Send invite" />
         </div>
       </div>
     </Dialog>

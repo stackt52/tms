@@ -1,8 +1,8 @@
-import type { AdminOverview, CostCentre, CreateRateBody, CreateWorkflowVersionBody, Department, Location, PolicyConfig, Project, Rate, Unit, UpdateUserBody, UserProfile, Vehicle, Vendor, WorkflowDefinition } from '@tms/shared';
-import { RATE_KEY_LABELS, addDays, isoDate } from '@tms/shared';
+import type { AdminOverview, CostCentre, CreateRateBody, CreateUserBody, CreateUserResponse, CreateWorkflowVersionBody, Department, Location, PolicyConfig, Project, Rate, Unit, UpdateUserBody, UserProfile, Vehicle, Vendor, WorkflowDefinition } from '@tms/shared';
+import { RATE_KEY_LABELS, addDays, initialsOf, isoDate } from '@tms/shared';
 import type { Actor } from '../lib/context';
 import { COL, auth, db, nowIso } from '../lib/firebase';
-import { notFound, unprocessable } from '../lib/errors';
+import { conflict, notFound, unprocessable } from '../lib/errors';
 import { audit } from '../lib/audit';
 import { byAsc, byDesc, getAllDocs, getDoc } from '../lib/query';
 import { POLICY_DOC_ID, invalidateConfig, loadConfig } from './config';
@@ -137,6 +137,83 @@ export async function upsertVendor(actor: Actor, body: Partial<Vendor>, id?: str
   await db.collection(COL.vendors).doc(vendorId).set(v);
   await audit(actor, { entityType: 'vendor', entityId: vendorId, action: existing ? 'UPDATED' : 'CREATED', oldValue: existing ?? undefined, newValue: v });
   return v;
+}
+
+const AVATAR_TONES: UserProfile['avatarTone'][] = ['deep', 'secondary', 'tertiary', 'warning'];
+
+/**
+ * Sends Firebase's built-in "reset password" email, which doubles as the set-password invite for a
+ * freshly created account. Uses the public web API key (functions/.env WEB_API_KEY); against the Auth
+ * emulator the mail is printed in the emulator log instead of being delivered.
+ */
+async function sendSetPasswordEmail(email: string): Promise<boolean> {
+  const emulator = process.env.FIREBASE_AUTH_EMULATOR_HOST;
+  const key = emulator ? 'emulator' : process.env.WEB_API_KEY;
+  if (!key) {
+    console.warn('[admin] WEB_API_KEY not configured; invite email skipped');
+    return false;
+  }
+  const base = emulator ? `http://${emulator}` : 'https://identitytoolkit.googleapis.com';
+  try {
+    const res = await fetch(`${base}/identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requestType: 'PASSWORD_RESET', email }),
+    });
+    if (!res.ok) console.warn('[admin] invite email failed', res.status, await res.text());
+    return res.ok;
+  } catch (e) {
+    console.warn('[admin] invite email failed', (e as Error).message);
+    return false;
+  }
+}
+
+/** Admin → Users & roles → Add user: creates the Auth account (no password), profile, claims and invite. */
+export async function createUser(actor: Actor, body: CreateUserBody): Promise<CreateUserResponse> {
+  const email = body.email.trim().toLowerCase();
+  const displayName = body.displayName.trim();
+  let uid: string;
+  let existedInAuth = false;
+  try {
+    const existing = await auth.getUserByEmail(email);
+    uid = existing.uid;
+    existedInAuth = true;
+    const profile = await getDoc<UserProfile>(COL.users, uid);
+    if (profile) throw conflict('USER_EXISTS', `${email} already has a TMS profile (${profile.displayName}). Edit it instead.`);
+  } catch (e) {
+    if ((e as { status?: number }).status === 409) throw e;
+    const created = await auth.createUser({ email, displayName, emailVerified: false, disabled: false });
+    uid = created.uid;
+  }
+  const profile: UserProfile = {
+    id: uid,
+    email,
+    displayName,
+    initials: initialsOf(displayName),
+    avatarTone: AVATAR_TONES[Math.abs([...uid].reduce((h, c) => h + c.charCodeAt(0), 0)) % AVATAR_TONES.length]!,
+    roles: body.roles,
+    title: body.title,
+    departmentId: body.departmentId,
+    unitId: body.unitId,
+    supervisorId: body.supervisorId,
+    dutyStationId: body.dutyStationId,
+    costCentreIds: body.costCentreIds ?? [],
+    province: body.province,
+    phone: body.phone,
+    active: true,
+    createdAt: nowIso(),
+  };
+  await db.collection(COL.users).doc(uid).set(profile);
+  await auth.setCustomUserClaims(uid, { roles: body.roles }).catch((e: unknown) => console.warn('[admin] custom claims not set', (e as Error).message));
+  let setupLink: string | undefined;
+  try {
+    setupLink = await auth.generatePasswordResetLink(email);
+  } catch (e) {
+    console.warn('[admin] could not generate set-password link', (e as Error).message);
+  }
+  const inviteSent = body.sendInvite === false ? false : await sendSetPasswordEmail(email);
+  await audit(actor, { entityType: 'user', entityId: uid, action: 'CREATED', newValue: { email, roles: body.roles, inviteSent, existedInAuth } });
+  return { user: profile, inviteSent, setupLink, existedInAuth };
 }
 
 export async function updateUser(actor: Actor, id: string, body: UpdateUserBody): Promise<UserProfile> {

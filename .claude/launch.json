@@ -10,7 +10,7 @@
     {
       "name": "web",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "-w", "web"],
+      "runtimeArgs": ["--prefix", "web", "run", "dev"],
       "port": 3000
     }
   ]

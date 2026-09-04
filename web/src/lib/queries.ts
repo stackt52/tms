@@ -13,6 +13,8 @@ import type {
   CreateExternalPaymentBody,
   CreateMileageClaimBody,
   CreateRateBody,
+  CreateUserBody,
+  CreateUserResponse,
   CreateVehicleBookingBody,
   CreateWorkflowVersionBody,
   DashboardResponse,
@@ -346,6 +348,7 @@ export const useUpdateRate = () => useAdminMutation<{ id: string; note?: string;
 export const useCreateWorkflow = () => useAdminMutation<CreateWorkflowVersionBody, WorkflowDefinition>((body) => api('/admin/workflows', { method: 'POST', body }));
 export const useUpdatePolicy = () => useAdminMutation<Partial<PolicyConfig>, PolicyConfig>((body) => api('/admin/policy', { method: 'PATCH', body }));
 export const useUpsertVendor = () => useAdminMutation<Partial<Vendor> & { id?: string }, Vendor>(({ id, ...body }) => (id ? api(`/admin/vendors/${id}`, { method: 'PATCH', body }) : api('/admin/vendors', { method: 'POST', body })));
+export const useCreateUser = () => useAdminMutation<CreateUserBody, CreateUserResponse>((body) => api('/admin/users', { method: 'POST', body }));
 export const useUpdateUser = () => useAdminMutation<{ id: string } & UpdateUserBody, UserProfile>(({ id, ...body }) => api(`/admin/users/${id}`, { method: 'PATCH', body }));
 export const useUpsertMasterData = () =>
   useAdminMutation<{ kind: 'departments' | 'units' | 'projects' | 'cost-centres' | 'locations'; id?: string; data: Record<string, unknown> }>(({ kind, id, data }) => (id ? api(`/admin/${kind}/${id}`, { method: 'PATCH', body: data }) : api(`/admin/${kind}`, { method: 'POST', body: data })));
