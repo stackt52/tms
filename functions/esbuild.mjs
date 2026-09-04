@@ -13,6 +13,7 @@ const common = {
   // Runtime deps stay external and are installed from package.json at deploy time;
   // @tms/shared is bundled in so Cloud Functions never needs the workspace symlink.
   external: ['firebase-admin', 'firebase-functions', 'express', 'cors', 'busboy', 'zod'],
+  alias: { '@tms/shared': new URL('../packages/shared/src/index.ts', import.meta.url).pathname },
 };
 
 const targets = seed

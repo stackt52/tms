@@ -9,7 +9,7 @@ setGlobalOptions({ region: 'us-east4', maxInstances: 10, memory: '512MiB', timeo
 const app = createApp();
 
 /** REST API — https://<region>-<project>.cloudfunctions.net/api/api/v1/... (rewrite /api in front of it in prod). */
-export const api = onRequest({ cors: false }, app);
+export const api = onRequest({ cors: false, invoker: 'public' }, app);
 
 /** Nightly SOP automation: open liquidations on return date, mark overdue, send reminders (SRS §19.1, §19.3). */
 export const dailyJobs = onSchedule({ schedule: 'every day 04:00', timeZone: 'Africa/Lusaka' }, async () => {

@@ -21,7 +21,6 @@
     "emulate:smoke": "npm run build && node esbuild.mjs --seed && cd .. && firebase emulators:exec --project demo-ihm-tms --only auth,firestore,functions,storage \"node functions/lib/seed.js && node functions/scripts/smoke.mjs\""
   },
   "dependencies": {
-    "@tms/shared": "*",
     "busboy": "^1.6.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
