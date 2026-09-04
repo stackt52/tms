@@ -76,7 +76,11 @@ npm run build       # shared typecheck, API bundle, Next.js build
    firebase apphosting:backends:create --project travel-management-system-454ea
    ```
    `web/apphosting.yaml` sets `API_PROXY_ORIGIN` so the browser calls `/api/v1/*` same-origin and Next.js proxies to the function. Pushes to `main` trigger rollouts.
-4. Bootstrap production data: run the master-data/rates/workflow parts of the seed against production once (the Admin screens) or enter them through **Admin → Rates / Workflows / Policy rules / Master data**, then grant `SYSTEM_ADMIN` to the first administrator's `users/{uid}` document.
+4. Bootstrap production data (one-off, uses your `firebase login` credentials; idempotent, never deletes):
+   ```bash
+   npm run seed:prod -w functions -- --project <project-id> --admin-email you@ihm.org --admin-name "Your Name" --api-key <web-api-key> --yes
+   ```
+   This writes master data, effective-dated rates, workflow versions and the policy document, creates the first `SYSTEM_ADMIN` user (all roles) and emails them a set-password link. Everything is then editable under **Admin**; assign HODs, supervisors and cost-centre owners once staff have signed in.
 
 ## Policy points that stay configurable (SRS §28)
 
