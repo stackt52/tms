@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Avatar, Button, Chip, Icon, TextField, useToast } from '@/components/m3';
@@ -37,9 +38,7 @@ export function LoginScreen() {
     <div className="login">
       <section className="login__hero">
         <div className="row g12">
-          <div className="rail__logo" style={{ margin: 0 }}>
-            IHM
-          </div>
+          <Image src="/logo.svg" alt="IHM TMS" width={48} height={48} priority style={{ borderRadius: 16 }} />
           <div>
             <div style={{ fontWeight: 750, fontSize: 15 }}>IHM Southern Africa</div>
             <div style={{ fontSize: 12.5, opacity: 0.75 }}>Travel Management System</div>
@@ -64,7 +63,7 @@ export function LoginScreen() {
           </Chip>
         </div>
         <div className="spacer" />
-        <div style={{ fontSize: 11.5, opacity: 0.6 }}>Material 3 Expressive · Firebase App Hosting · Cloud Functions · Firestore</div>
+        <div style={{ fontSize: 11.5, opacity: 0.6 }}>&copy; 2026 · All rights reserved</div>
       </section>
       <section className="login__form">
         <div className="login__card">

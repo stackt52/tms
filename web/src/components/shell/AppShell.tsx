@@ -1,6 +1,7 @@
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Button, Icon } from '@/components/m3';
 import { useAuth } from '@/lib/auth-context';
@@ -22,9 +23,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     return (
       <div className="gate">
         <div className="col g12" style={{ alignItems: 'center' }}>
-          <div className="rail__logo" style={{ margin: 0 }}>
-            IHM
-          </div>
+          <Image src="/logo.svg" alt="IHM TMS" width={56} height={56} priority style={{ borderRadius: 18 }} />
           <div className="t-caption">Loading your workspace…</div>
         </div>
       </div>

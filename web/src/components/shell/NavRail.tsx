@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@/components/m3';
@@ -52,7 +53,7 @@ export function NavRail() {
   return (
     <nav className="rail" aria-label="Primary">
       <Link href="/" className="rail__logo" aria-label="IHM TMS home">
-        IHM
+        <Image src="/logo.svg" alt="" width={48} height={48} priority />
       </Link>
       {primary.filter((i) => i.show).map((i) => render(i))}
       <div className="rail__spacer" />
