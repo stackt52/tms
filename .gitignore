@@ -20,3 +20,6 @@ pubsub-debug.log
 *.tsbuildinfo
 serviceAccountKey*.json
 /design_handoff_ihm_tms/
+
+# stray emulator exports
+firebase-export-*/
