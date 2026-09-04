@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { EDITABLE_STATUSES, STATUS_META, WIZARD_STEPS, WIZARD_STEP_LABELS, fmtTime, type TravelRequest, type WizardStep } from '@tms/shared';
-import { Button, CardSkeleton, Chip, EmptyState, ErrorState, Icon, IconButton, ProgressSegments, Skeleton, useToast } from '@/components/m3';
+import { Button, CardSkeleton, Chip, Dialog, EmptyState, ErrorState, Icon, IconButton, ProgressSegments, Skeleton, useToast } from '@/components/m3';
 import { ApiClientError } from '@/lib/api';
 import { useMe } from '@/lib/auth-context';
 import { useIsMobile } from '@/lib/hooks';
-import { useMasterData, useSubmitTravelRequest, useTravelRequest, useUpdateTravelRequest } from '@/lib/queries';
+import { useDeleteTravelRequest, useMasterData, useSubmitTravelRequest, useTravelRequest, useUpdateTravelRequest } from '@/lib/queries';
 import { CATEGORY_SHORT, STEP_COPY, applyPatch, detailLines, mergePatch, validateStep, type Patch, type StepProps } from './wizard-state';
 import { StepTravelType } from './StepTravelType';
 import { StepTripDetails } from './StepTripDetails';
@@ -92,6 +92,34 @@ function Wizard({ server }: { server: TravelRequest }) {
   const update = useUpdateTravelRequest(id);
   const submit = useSubmitTravelRequest(id);
   const { success, error } = useToast();
+  const del = useDeleteTravelRequest(id);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const doDelete = () =>
+    del.mutate(undefined, {
+      onSuccess: () => {
+        success(`Draft ${id} deleted`);
+        router.replace('/requests');
+      },
+      onError: (e) => error(e, 'Could not delete draft'),
+    });
+  const deleteDialog = (
+    <Dialog
+      open={confirmDelete}
+      onClose={() => setConfirmDelete(false)}
+      title="Delete this draft?"
+      subtitle={`${id} has not been submitted. Deleting removes it permanently — this cannot be undone.`}
+      actions={
+        <>
+          <Button variant="text" onClick={() => setConfirmDelete(false)}>
+            Keep draft
+          </Button>
+          <Button variant="danger" icon="delete" onClick={doDelete} loading={del.isPending}>
+            Delete draft
+          </Button>
+        </>
+      }
+    />
+  );
 
   const stepParam = params.get('step') as WizardStep | null;
   const step: WizardStep = stepParam && WIZARD_STEPS.includes(stepParam) ? stepParam : (WIZARD_STEPS.includes(server.wizard?.lastStep) ? server.wizard.lastStep : 'travel_type');
@@ -256,7 +284,9 @@ function Wizard({ server }: { server: TravelRequest }) {
           <Chip tone="neutral" size="xs" icon={saving ? 'progress_activity' : undefined}>
             {saving ? 'Saving…' : dirty ? 'Unsaved' : 'Draft saved'}
           </Chip>
+          {server.status === 'DRAFT' ? <IconButton icon="delete" label="Delete draft" onClick={() => setConfirmDelete(true)} /> : null}
         </div>
+        {deleteDialog}
         <div className="mt14">
           <ProgressSegments total={WIZARD_STEPS.length} done={stepIdx + 1} />
         </div>
@@ -299,7 +329,13 @@ function Wizard({ server }: { server: TravelRequest }) {
         <Chip tone="neutral" icon={saving ? 'progress_activity' : undefined}>
           {saving ? 'Saving…' : dirty ? 'Unsaved changes' : savedLabel}
         </Chip>
+        {server.status === 'DRAFT' ? (
+          <Button variant="danger-text" size="xs" icon="delete" onClick={() => setConfirmDelete(true)} style={{ marginLeft: 'auto' }}>
+            Delete draft
+          </Button>
+        ) : null}
       </div>
+      {deleteDialog}
 
       <div className="wiz">
         <nav className="wiz__stepper" aria-label="Wizard steps">

@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ACTIVE_TRIP_STATUSES,
   COST_CATEGORY_LABELS,
@@ -18,7 +19,7 @@ import {
 } from '@tms/shared';
 import { Avatar, Banner, Button, Card, CardSkeleton, ChainTimeline, Chip, Dialog, EmptyState, ErrorState, Icon, KV, PageHeader, ProcessTimeline, StatTile, StatusChip, fileIcon, humanize, useToast } from '@/components/m3';
 import { openFile } from '@/lib/api';
-import { useCancelTravelRequest, useSubmitTravelRequest, useTravelRequest } from '@/lib/queries';
+import { useCancelTravelRequest, useDeleteTravelRequest, useSubmitTravelRequest, useTravelRequest } from '@/lib/queries';
 import './requests.css';
 
 export function RequestDetailScreen() {
@@ -58,8 +59,19 @@ function chainMeta(it: ApprovalChainItem): string | undefined {
 function Detail({ data }: { data: TravelRequestDetail }) {
   const { request: r, trip, liquidation, people, project, costCentre } = data;
   const { success, error } = useToast();
+  const router = useRouter();
   const submit = useSubmitTravelRequest(r.id);
   const cancel = useCancelTravelRequest(r.id);
+  const del = useDeleteTravelRequest(r.id);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const doDelete = () =>
+    del.mutate(undefined, {
+      onSuccess: () => {
+        success(`Draft ${r.id} deleted`);
+        router.push('/requests');
+      },
+      onError: (e) => error(e, 'Could not delete draft'),
+    });
   const [confirmCancel, setConfirmCancel] = useState(false);
   const it = r.itinerary;
   const elig = r.eligibility;
@@ -317,7 +329,7 @@ function Detail({ data }: { data: TravelRequestDetail }) {
             </Card>
           ) : null}
 
-          {data.canCancel || data.canEdit || data.canSubmit ? (
+          {data.canCancel || data.canEdit || data.canSubmit || data.canDelete ? (
             <Card title="Actions">
               <div className="req-actions">
                 {data.canEdit ? (
@@ -330,9 +342,14 @@ function Detail({ data }: { data: TravelRequestDetail }) {
                     Submit for approval
                   </Button>
                 ) : null}
-                {data.canCancel ? (
+                {data.canCancel && !data.canDelete ? (
                   <Button variant="danger-text" size="sm" icon="cancel" onClick={() => setConfirmCancel(true)}>
                     Cancel request
+                  </Button>
+                ) : null}
+                {data.canDelete ? (
+                  <Button variant="danger-text" size="sm" icon="delete" onClick={() => setConfirmDelete(true)}>
+                    Delete draft
                   </Button>
                 ) : null}
               </div>
@@ -346,6 +363,22 @@ function Detail({ data }: { data: TravelRequestDetail }) {
         </div>
       </div>
 
+      <Dialog
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title="Delete this draft?"
+        subtitle={`${r.id} has not been submitted. Deleting removes it permanently — this cannot be undone.`}
+        actions={
+          <>
+            <Button variant="text" onClick={() => setConfirmDelete(false)}>
+              Keep draft
+            </Button>
+            <Button variant="danger" icon="delete" onClick={doDelete} loading={del.isPending}>
+              Delete draft
+            </Button>
+          </>
+        }
+      />
       <Dialog
         open={confirmCancel}
         onClose={() => setConfirmCancel(false)}

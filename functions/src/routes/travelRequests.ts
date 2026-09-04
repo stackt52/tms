@@ -6,7 +6,7 @@ import { actorOf } from '../lib/context';
 import { parseBody, qs, wrap } from '../lib/http';
 import { paged, parseLimit, parseStatusList } from '../lib/query';
 import { loadConfig } from '../services/config';
-import { buildDetail, cancelRequest, createRequest, getRequestForActor, listAudit, listRequests, patchRequest, submitRequest } from '../services/travelRequests';
+import { buildDetail, cancelRequest, createRequest, deleteRequest, getRequestForActor, listAudit, listRequests, patchRequest, submitRequest } from '../services/travelRequests';
 
 const Category = z.enum(['LOCAL', 'FIELD', 'INTERNATIONAL']);
 const Money = z.number().min(0);
@@ -199,6 +199,14 @@ export function travelRequestsRouter(): Router {
       const actor = actorOf(req);
       const submitted = await submitRequest(actor, req.params.id);
       res.json(await buildDetail(actor, submitted));
+    }),
+  );
+
+  r.delete(
+    '/:id',
+    wrap(async (req, res) => {
+      await deleteRequest(actorOf(req), req.params.id);
+      res.status(204).end();
     }),
   );
 

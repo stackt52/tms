@@ -148,6 +148,8 @@ export interface TravelRequestDetail {
   canEdit: boolean;
   canSubmit: boolean;
   canCancel: boolean;
+  /** Draft can be permanently deleted (requester or admin, DRAFT only). */
+  canDelete: boolean;
   approvalChain: ApprovalChainItem[];
   audit?: AuditEvent[];
 }

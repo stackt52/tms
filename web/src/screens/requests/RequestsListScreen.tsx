@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { ACTIVE_TRIP_STATUSES, REVIEW_STATUSES, TRAVEL_CATEGORY_LABELS, fmtRange, plural, type RequestStatus, type TravelRequest } from '@tms/shared';
-import { Button, CardSkeleton, EmptyState, ErrorState, Icon, PageHeader, PillTabs, StatusChip, useToast } from '@/components/m3';
-import { useCreateTravelRequest, useTravelRequests } from '@/lib/queries';
+import { Button, CardSkeleton, Dialog, EmptyState, ErrorState, Icon, IconButton, PageHeader, PillTabs, StatusChip, useToast } from '@/components/m3';
+import { useCreateTravelRequest, useDeleteTravelRequest, useTravelRequests } from '@/lib/queries';
 import './requests.css';
 
 type Filter = 'all' | 'drafts' | 'review' | 'approved' | 'closed';
@@ -116,11 +116,59 @@ export function RequestsListScreen() {
                 </div>
                 <div className="req-card__meta">{requestMeta(r) || 'Draft — continue in the wizard'}</div>
               </div>
+              {r.status === 'DRAFT' ? <DraftDeleteButton request={r} /> : null}
               <Icon name="chevron_right" size={22} color="var(--md-outline)" />
             </Link>
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+/** Trash action on draft rows; stops the row link from navigating and confirms before deleting. */
+function DraftDeleteButton({ request }: { request: TravelRequest }) {
+  const [open, setOpen] = useState(false);
+  const del = useDeleteTravelRequest(request.id);
+  const { success, error } = useToast();
+  return (
+    <span
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      style={{ display: 'inline-flex' }}
+    >
+      <IconButton icon="delete" label={`Delete draft ${request.id}`} onClick={() => setOpen(true)} />
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Delete this draft?"
+        subtitle={`${request.id} · ${request.activityTitle || 'Untitled request'} will be removed permanently.`}
+        actions={
+          <>
+            <Button variant="text" onClick={() => setOpen(false)}>
+              Keep draft
+            </Button>
+            <Button
+              variant="danger"
+              icon="delete"
+              loading={del.isPending}
+              onClick={() =>
+                del.mutate(undefined, {
+                  onSuccess: () => {
+                    success(`Draft ${request.id} deleted`);
+                    setOpen(false);
+                  },
+                  onError: (e) => error(e, 'Could not delete draft'),
+                })
+              }
+            >
+              Delete draft
+            </Button>
+          </>
+        }
+      />
+    </span>
   );
 }

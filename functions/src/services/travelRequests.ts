@@ -307,6 +307,7 @@ export async function buildDetail(actor: Actor, req: TravelRequest, extra: { inc
     project: project ?? undefined,
     costCentre: costCentre ?? undefined,
     canEdit: owner && EDITABLE_STATUSES.includes(req.status),
+    canDelete: (owner || isAdmin(actor)) && req.status === 'DRAFT',
     canSubmit: owner && EDITABLE_STATUSES.includes(req.status),
     canCancel: (req.requesterId === actor.uid && ['DRAFT', ...REVIEW_STATUSES, 'RETURNED_FOR_CORRECTION'].includes(req.status)) || (isAdmin(actor) && !['CLOSED', 'CANCELLED', 'REJECTED'].includes(req.status)),
     approvalChain: buildApprovalChain(req, fallback),
@@ -455,6 +456,16 @@ export async function cancelRequest(actor: Actor, id: string, reason?: string): 
   await audit(actor, { entityType: 'travelRequest', entityId: id, action: 'CANCELLED', oldValue: { status: req.status }, newValue: { status: 'CANCELLED', reason } });
   if (!owner) await notify(req.requesterId, { title: 'Travel request cancelled', body: `${req.id} · ${req.activityTitle}${reason ? ` — ${reason}` : ''}`, link: `/requests/${req.id}`, kind: 'REQUEST_CANCELLED' });
   return next;
+}
+
+/** Permanently removes a DRAFT (never submitted, so nothing downstream references it). */
+export async function deleteRequest(actor: Actor, id: string): Promise<void> {
+  const req = await getRequest(id);
+  const owner = req.requesterId === actor.uid;
+  if (!(owner || isAdmin(actor))) throw forbidden('Only the requester or an administrator can delete a draft');
+  if (req.status !== 'DRAFT') throw unprocessable('NOT_A_DRAFT', `Only drafts can be deleted — ${req.id} is ${req.status}. Cancel it instead.`);
+  await db.collection(COL.travelRequests).doc(id).delete();
+  await audit(actor, { entityType: 'travelRequest', entityId: id, action: 'DELETED', oldValue: { status: req.status, activityTitle: req.activityTitle, requesterId: req.requesterId } });
 }
 
 export function assertOwnerOrAdmin(actor: Actor, req: TravelRequest): void {

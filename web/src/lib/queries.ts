@@ -147,6 +147,13 @@ export function useCancelTravelRequest(id: string) {
     onSuccess: () => inv(keys.request(id), ['travel-requests'], keys.dashboard),
   });
 }
+export function useDeleteTravelRequest(id: string) {
+  const inv = useInvalidate();
+  return useMutation({
+    mutationFn: () => api<void>(`/travel-requests/${id}`, { method: 'DELETE' }),
+    onSuccess: () => inv(['travel-requests'], keys.dashboard),
+  });
+}
 export const useEligibilityPreview = (id: string) =>
   useMutation({ mutationFn: (body: EligibilityPreviewBody) => api<EligibilityPreviewResponse>(`/travel-requests/${id}/eligibility-preview`, { method: 'POST', body }) });
 
